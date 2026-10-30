@@ -30,7 +30,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.6;
 
-    /* YOUR GALAXY PHOTO BACKGROUND */
     background-image:
         linear-gradient(
             rgba(5, 4, 20, 0.30),
@@ -171,8 +170,7 @@ button {
 .summary strong {
     color: #a9eaff;
 }
-
-/* PLANET SECTION */
+ 
 
 .section-heading {
     margin: 38px 0 10px;
@@ -421,7 +419,6 @@ button {
     color: #a9eaff;
 }
 
-/* MOBILE LAYOUT */
 
 @media (max-width: 800px) {
     .planet-grid {
@@ -479,7 +476,6 @@ button {
         </div>
     </header>
 
-    <!-- BIRTHDAY CALCULATOR -->
     <section class="panel calculator">
         <div>
             <label for="birthday">Enter your date of birth</label>
@@ -499,10 +495,8 @@ button {
 
     <div id="message" role="status" aria-live="polite"></div>
 
-    <!-- EARTH AGE RESULT -->
     <section class="panel summary" id="summary"></section>
 
-    <!-- PLANET CARDS -->
     <h2 class="section-heading" id="resultsHeading">
         Choose a World to Explore
     </h2>
@@ -514,10 +508,8 @@ button {
 
     <div class="planet-grid" id="planetGrid"></div>
 
-    <!-- SELECTED PLANET INFORMATION -->
     <section class="panel details" id="details" aria-live="polite"></section>
 
-    <!-- FOOTER AND REFERENCES -->
     <footer class="footer">
         <p>
             <b>How does the calculator work?</b>
@@ -654,7 +646,6 @@ const localToday = new Date(
 
 birthdayInput.max = localToday;
 
-/* FORMAT NUMBERS */
 
 function formatNumber(number, decimals = 2) {
     return Number(number).toLocaleString(undefined, {
@@ -870,7 +861,6 @@ document
             86400000
         );
 
-        /* CALCULATE THE EARTH AGE */
 
         const earthAge = calculateWorldAge(
             daysLived,
@@ -923,4 +913,3 @@ drawCards();
 
 </body>
 </html>
-```
