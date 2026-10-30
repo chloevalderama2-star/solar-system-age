@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Your Age in the Solar System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --text: #f4f4ff;
+    --muted: #d0d0e8;
+    --panel: rgba(10, 8, 30, 0.78);
+    --border: rgba(210, 195, 255, 0.3);
+    --accent: #c5a6ff;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+
+    /* YOUR GALAXY PHOTO BACKGROUND */
+    background-image:
+        linear-gradient(
+            rgba(5, 4, 20, 0.30),
+            rgba(5, 4, 20, 0.48)
+        ),
+        url("galaxy.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.wrap {
+    width: min(1150px, 92%);
+    margin: auto;
+    padding: 35px 0 50px;
+}
+
+
+header {
+    text-align: center;
+    padding: 25px 0 35px;
+}
+
+.eyebrow {
+    color: #d2baff;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: clamp(2.3rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin: 15px 0;
+    text-shadow: 0 4px 20px #000;
+}
+
+.subtitle {
+    max-width: 720px;
+    margin: 0 auto;
+    color: #e1dff5;
+    text-shadow: 0 2px 8px #000;
+}
+
+.student {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 24px;
+    margin-top: 24px;
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: rgba(8, 5, 25, 0.8);
+    font-size: 0.92rem;
+}
+
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.calculator {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 18px;
+    align-items: end;
+    max-width: 800px;
+    margin: 0 auto 25px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cfc5ff;
+    border-radius: 12px;
+    font: inherit;
+    color: #151027;
+    background: #fff;
+}
+
+.helper {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+button {
+    font: inherit;
+}
+
+.calculate-button {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #c6a7ff, #8ddfff);
+    color: #17102e;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.calculate-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(185, 150, 255, 0.3);
+}
+
+#message {
+    text-align: center;
+    min-height: 25px;
+    color: #ffe0a8;
+    font-weight: bold;
+    margin: 12px 0;
+}
+
+.summary {
+    display: none;
+    max-width: 800px;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.summary strong {
+    color: #a9eaff;
+}
+
+/* PLANET SECTION */
+
+.section-heading {
+    margin: 38px 0 10px;
+    font-size: 1.8rem;
+    text-shadow: 0 2px 12px #000;
+}
+
+.section-description {
+    margin: 0 0 22px;
+    color: #e1dff5;
+    text-shadow: 0 2px 8px #000;
+}
+
+.planet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.planet-card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 240px;
+    padding: 20px;
+    overflow: hidden;
+    text-align: left;
+    color: var(--text);
+    background: rgba(9, 7, 28, 0.82);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.planet-card:hover {
+    transform: translateY(-5px);
+    border-color: #c7aaff;
+}
+
+.planet-card.selected {
+    border: 2px solid #d0b7ff;
+    background: rgba(47, 28, 81, 0.9);
+}
+
+.planet-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 14px;
+}
+
+.planet-art {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    flex: 0 0 70px;
+    border-radius: 50%;
+    overflow: visible;
+    box-shadow:
+        inset -12px -8px 18px rgba(0, 0, 0, 0.45),
+        0 0 22px rgba(175, 155, 255, 0.2);
+}
+
+.planet-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(
+        125deg,
+        rgba(255,255,255,0.4),
+        transparent 40%,
+        rgba(0,0,0,0.25)
+    );
+}
+
+
+.mercury {
+    background: repeating-linear-gradient(
+        35deg,
+        #b5b0ad 0 6px,
+        #77716e 7px 10px,
+        #d1c9c2 11px 15px
+    );
+}
+
+.venus {
+    background: repeating-linear-gradient(
+        155deg,
+        #f6d18d 0 8px,
+        #c9874c 9px 13px,
+        #edb56d 14px 19px
+    );
+}
+
+.earth {
+    background:
+        radial-gradient(ellipse at 30% 35%, #79d9ff 0 15%, transparent 16%),
+        radial-gradient(ellipse at 65% 62%, #55b86a 0 19%, transparent 20%),
+        radial-gradient(ellipse at 40% 75%, #329b59 0 13%, transparent 14%),
+        #2476d2;
+}
+
+.mars {
+    background: repeating-linear-gradient(
+        45deg,
+        #c96d4d 0 9px,
+        #8e392d 10px 15px,
+        #e08a5e 16px 21px
+    );
+}
+
+.jupiter {
+    background: repeating-linear-gradient(
+        0deg,
+        #d9b58d 0 7px,
+        #a96f4e 8px 13px,
+        #f0d2a4 14px 20px,
+        #bd8760 21px 26px
+    );
+}
+
+.saturn {
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 34%,
+            #e4d0a1 35% 42%,
+            #9b805a 43% 47%,
+            transparent 48%
+        ),
+        repeating-linear-gradient(
+            0deg,
+            #e9d6ad 0 9px,
+            #b99b70 10px 15px
+        );
+}
+
+.uranus {
+    background: repeating-linear-gradient(
+        0deg,
+        #9be3e7 0 12px,
+        #65bdca 13px 17px,
+        #b3f1f1 18px 24px
+    );
+}
+
+.neptune {
+    background:
+        radial-gradient(ellipse at 65% 35%, #6cbcff 0 10%, transparent 11%),
+        repeating-linear-gradient(
+            25deg,
+            #2364d8 0 12px,
+            #1741a0 13px 17px,
+            #398be8 18px 24px
+        );
+}
+
+.pluto {
+    background: repeating-linear-gradient(
+        35deg,
+        #c5a18c 0 9px,
+        #8d6b5b 10px 15px,
+        #ddc0a8 16px 22px
+    );
+}
+
+.planet-name {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.planet-type {
+    color: #d0cce8;
+    font-size: 0.82rem;
+}
+
+.age {
+    color: #b5eaff;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin: 12px 0 3px;
+    overflow-wrap: anywhere;
+}
+
+.age-days {
+    color: #e1def6;
+    font-size: 0.9rem;
+}
+
+.orbit {
+    color: #d0cce8;
+    font-size: 0.84rem;
+    margin-top: 12px;
+}
+
+
+.details {
+    display: none;
+    margin-top: 25px;
+}
+
+.details.open {
+    display: block;
+}
+
+.details-inner {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+.details .planet-art {
+    width: 100px;
+    height: 100px;
+}
+
+.details p {
+    color: #e0def2;
+    margin: 8px 0;
+}
+
+.details h2 {
+    margin: 5px 0;
+}
+
+
+.footer {
+    margin-top: 35px;
+    text-align: center;
+    color: #e1dff5;
+    font-size: 0.9rem;
+    text-shadow: 0 2px 8px #000;
+}
+
+.footer a {
+    color: #d3bdff;
+    text-decoration: underline;
+}
+
+.footer a:hover {
+    color: #a9eaff;
+}
+
+/* MOBILE LAYOUT */
+
+@media (max-width: 800px) {
+    .planet-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body {
+        background-attachment: scroll;
+    }
+}
+
+@media (max-width: 560px) {
+    .wrap {
+        width: 94%;
+        padding-top: 20px;
+    }
+
+    .calculator {
+        grid-template-columns: 1fr;
+    }
+
+    .planet-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 17px;
+    }
+
+    .details-inner {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+    <header>
+        <div class="eyebrow">Explore • Calculate • Discover</div>
+
+        <h1>Your Age in the Solar System</h1>
+
+        <p class="subtitle">
+            Have you ever wondered how old you would be on another world?
+            Enter your birthday and discover your age across the eight
+            planets and Pluto.
+        </p>
+
+        <div class="student">
+            <span><b>Student:</b> KATE CHLOE M. VALDERAMA</span>
+            <span><b>Course &amp; Section:</b> BSIT - 1C</span>
+        </div>
+    </header>
+
+    <!-- BIRTHDAY CALCULATOR -->
+    <section class="panel calculator">
+        <div>
+            <label for="birthday">Enter your date of birth</label>
+
+            <input type="date" id="birthday">
+
+            <p class="helper">
+                Your birthday is used to calculate how many Earth days
+                you have lived.
+            </p>
+        </div>
+
+        <button class="calculate-button" id="calculateBtn" type="button">
+            Calculate My Space Age
+        </button>
+    </section>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <!-- EARTH AGE RESULT -->
+    <section class="panel summary" id="summary"></section>
+
+    <!-- PLANET CARDS -->
+    <h2 class="section-heading" id="resultsHeading">
+        Choose a World to Explore
+    </h2>
+
+    <p class="section-description">
+        Click any world to discover facts about it. Enter your birthday
+        to calculate your age on each world.
+    </p>
+
+    <div class="planet-grid" id="planetGrid"></div>
+
+    <!-- SELECTED PLANET INFORMATION -->
+    <section class="panel details" id="details" aria-live="polite"></section>
+
+    <!-- FOOTER AND REFERENCES -->
+    <footer class="footer">
+        <p>
+            <b>How does the calculator work?</b>
+            A planet's year is the time it takes to complete one orbit
+            around the Sun. Each world has a different orbital period,
+            so your age in planetary years changes from world to world.
+        </p>
+
+        <p>
+            Planetary year lengths are approximate. Pluto is included as
+            the ninth world for this project, but it is classified as a
+            dwarf planet.
+        </p>
+
+        <p>
+            <b>References:</b><br>
+
+            <a
+                href="https://www.exploratorium.edu/explore/solar-system/age"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Exploratorium — Your Age on Other Worlds
+            </a>
+
+            <br>
+
+            <a
+                href="https://www.schoolsobservatory.org/things-to-do/space-age-calculator"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                The Schools' Observatory — Space Age Calculator
+            </a>
+        </p>
+    </footer>
+
+</div>
+
+<script>
+
+const worlds = [
+    {
+        name: "Mercury",
+        yearDays: 87.97,
+        type: "Terrestrial Planet",
+        art: "mercury",
+        description:
+            "Mercury is the smallest planet and the closest planet to the Sun. It completes an orbit in about 88 Earth days."
+    },
+    {
+        name: "Venus",
+        yearDays: 224.7,
+        type: "Terrestrial Planet",
+        art: "venus",
+        description:
+            "Venus is known for its thick and extremely hot atmosphere. One Venus year lasts about 225 Earth days."
+    },
+    {
+        name: "Earth",
+        yearDays: 365.26,
+        type: "Terrestrial Planet",
+        art: "earth",
+        description:
+            "Earth is our home planet. It has liquid water on its surface and supports the life we know. One Earth year takes about 365.26 days."
+    },
+    {
+        name: "Mars",
+        yearDays: 686.98,
+        type: "Terrestrial Planet",
+        art: "mars",
+        description:
+            "Mars is often called the Red Planet because of iron-rich dust on its surface. Its year lasts about 687 Earth days."
+    },
+    {
+        name: "Jupiter",
+        yearDays: 4332.59,
+        type: "Gas Giant",
+        art: "jupiter",
+        description:
+            "Jupiter is the largest planet in the Solar System. It takes nearly 12 Earth years to orbit the Sun."
+    },
+    {
+        name: "Saturn",
+        yearDays: 10759.22,
+        type: "Gas Giant",
+        art: "saturn",
+        description:
+            "Saturn is famous for its beautiful ring system. A Saturn year lasts about 29.5 Earth years."
+    },
+    {
+        name: "Uranus",
+        yearDays: 30688.5,
+        type: "Ice Giant",
+        art: "uranus",
+        description:
+            "Uranus is an ice giant that rotates on its side compared with most planets. Its year lasts about 84 Earth years."
+    },
+    {
+        name: "Neptune",
+        yearDays: 60182,
+        type: "Ice Giant",
+        art: "neptune",
+        description:
+            "Neptune is a distant, windy ice giant. It takes about 165 Earth years to complete one orbit around the Sun."
+    },
+    {
+        name: "Pluto",
+        yearDays: 90520,
+        type: "Dwarf Planet",
+        art: "pluto",
+        description:
+            "Pluto is a dwarf planet in the Kuiper Belt beyond Neptune. One Pluto year lasts about 248 Earth years."
+    }
+];
+
+
+const grid = document.getElementById("planetGrid");
+const birthdayInput = document.getElementById("birthday");
+const message = document.getElementById("message");
+const summary = document.getElementById("summary");
+const details = document.getElementById("details");
+const resultsHeading = document.getElementById("resultsHeading");
+
+let daysLived = null;
+let selectedWorld = null;
+
+
+const now = new Date();
+
+const localToday = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60000
+).toISOString().slice(0, 10);
+
+birthdayInput.max = localToday;
+
+/* FORMAT NUMBERS */
+
+function formatNumber(number, decimals = 2) {
+    return Number(number).toLocaleString(undefined, {
+        maximumFractionDigits: decimals
+    });
+}
+
+
+function calculateWorldAge(days, yearDays) {
+    const years = days / yearDays;
+    const wholeYears = Math.floor(years);
+    const leftoverDays = Math.floor(
+        days - wholeYears * yearDays
+    );
+
+    return {
+        years: years,
+        wholeYears: wholeYears,
+        leftoverDays: leftoverDays
+    };
+}
+
+
+function drawCards() {
+    grid.innerHTML = "";
+
+    worlds.forEach((world, index) => {
+        const card = document.createElement("button");
+
+        card.type = "button";
+
+        card.className = "planet-card" +
+            (selectedWorld === index ? " selected" : "");
+
+        card.setAttribute(
+            "aria-label",
+            "Learn about " + world.name
+        );
+
+        let ageMarkup = `
+            <div class="age">--</div>
+            <div class="age-days">
+                Enter your birthday to calculate
+            </div>
+        `;
+
+        if (daysLived !== null) {
+            const age = calculateWorldAge(
+                daysLived,
+                world.yearDays
+            );
+
+            ageMarkup = `
+                <div class="age">
+                    ${formatNumber(age.years, 2)} years
+                </div>
+
+                <div class="age-days">
+                    ${formatNumber(daysLived)} Earth days lived
+                </div>
+
+                <div class="age-days">
+                    About ${formatNumber(age.wholeYears)} years and
+                    ${formatNumber(age.leftoverDays)} planet-days
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <div class="planet-top">
+
+                <div
+                    class="planet-art ${world.art}"
+                    aria-hidden="true"
+                ></div>
+
+                <div>
+                    <h3 class="planet-name">${world.name}</h3>
+                    <div class="planet-type">${world.type}</div>
+                </div>
+
+            </div>
+
+            ${ageMarkup}
+
+            <div class="orbit">
+                One year = ${formatNumber(world.yearDays)}
+                Earth days
+            </div>
+        `;
+
+        card.addEventListener("click", function () {
+            selectedWorld = index;
+
+            drawCards();
+            showDetails(world);
+
+            details.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+
+function showDetails(world) {
+    details.classList.add("open");
+
+    let ageMarkup = `
+        <p>
+            Enter your birthday above and calculate your age
+            to see your result on this world.
+        </p>
+    `;
+
+    if (daysLived !== null) {
+        const age = calculateWorldAge(
+            daysLived,
+            world.yearDays
+        );
+
+        ageMarkup = `
+            <p>
+                <b>Your age:</b>
+                ${formatNumber(age.years, 2)}
+                ${world.name} years
+            </p>
+
+            <p>
+                <b>In whole years and days:</b>
+                ${age.wholeYears} ${world.name} years and about
+                ${age.leftoverDays} ${world.name}-days
+            </p>
+
+            <p>
+                <b>Total time lived:</b>
+                ${formatNumber(daysLived)} Earth days
+            </p>
+        `;
+    }
+
+    details.innerHTML = `
+        <div class="details-inner">
+
+            <div
+                class="planet-art ${world.art}"
+                aria-hidden="true"
+            ></div>
+
+            <div>
+                <div class="eyebrow">${world.type}</div>
+
+                <h2>${world.name}</h2>
+
+                <p>${world.description}</p>
+
+                ${ageMarkup}
+
+                <p>
+                    <b>Orbital period:</b>
+                    approximately
+                    ${formatNumber(world.yearDays)}
+                    Earth days per year.
+                </p>
+            </div>
+
+        </div>
+    `;
+}
+
+
+document
+    .getElementById("calculateBtn")
+    .addEventListener("click", function () {
+
+        message.textContent = "";
+
+        const birthdayValue = birthdayInput.value;
+
+        if (!birthdayValue) {
+            message.textContent =
+                "Please enter your date of birth first.";
+            return;
+        }
+
+        const birth = new Date(
+            birthdayValue + "T00:00:00"
+        );
+
+        const currentDate = new Date();
+
+        const todayLocal = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate()
+        );
+
+        if (
+            Number.isNaN(birth.getTime()) ||
+            birth > todayLocal
+        ) {
+            message.textContent =
+                "Please enter a valid birthday that is not in the future.";
+            return;
+        }
+
+
+        daysLived = Math.floor(
+            (todayLocal.getTime() - birth.getTime()) /
+            86400000
+        );
+
+        /* CALCULATE THE EARTH AGE */
+
+        const earthAge = calculateWorldAge(
+            daysLived,
+            365.26
+        );
+
+        summary.style.display = "block";
+
+        summary.innerHTML = `
+            <h2 style="margin-top: 0">
+                Your Earth Age
+            </h2>
+
+            <p>
+                You have lived for
+                <strong>
+                    ${formatNumber(daysLived)} Earth days
+                </strong>,
+                or approximately
+                <strong>
+                    ${formatNumber(earthAge.years, 2)} Earth years
+                </strong>.
+            </p>
+
+            <p>
+                Now discover your age on each world below!
+            </p>
+        `;
+
+        resultsHeading.textContent =
+            "Your Age on Each World";
+
+
+        drawCards();
+
+
+        if (selectedWorld !== null) {
+            showDetails(worlds[selectedWorld]);
+        }
+
+        summary.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+    });
+
+
+drawCards();
+</script>
+
+</body>
+</html>
+```
